@@ -1,0 +1,10 @@
+services:
+  questdb:
+    image: questdb/questdb
+    ports:
+      - "8080:8080"
+      - "8812:8812"
+      - "9000:9000"
+      - "9009:9009"
+    environment:
+      - QDB_LINE_TCP_COMMIT_INTERVAL_FRACTION=0
