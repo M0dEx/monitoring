@@ -16,9 +16,12 @@ data class MonitoredServiceConfig(
     val displayName: String,
     val url: String,
     val method: HttpMethod = HttpMethod.Head,
+    val payload: String? = null,
     val additionalHeaders: Map<String, String> = emptyMap(),
+    val expectedStatusCodes: Set<HttpStatusCode> = setOf(HttpStatusCode.OK),
     val expectedResponseRegex: Regex? = null,
     val intervalMillis: Long = 10000,
+    val timeoutMillis: Long = 10000,
 )
 
 data class MonitoringServiceConfig(

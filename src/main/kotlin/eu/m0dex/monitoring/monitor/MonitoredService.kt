@@ -3,6 +3,8 @@ package eu.m0dex.monitoring.monitor
 import eu.m0dex.monitoring.service.ILoggable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.network.sockets.*
+import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.plugins.websocket.*
@@ -13,7 +15,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import java.time.Instant
 
 class MonitoredService(
     private val questDbChannel: Channel<StatusMessage>,
@@ -22,12 +23,20 @@ class MonitoredService(
     val url: String,
     val method: HttpMethod,
     val intervalMillis: Long,
+    val timeoutMillis: Long,
     val additionalHeaders: Map<String, String>,
+    val expectedStatusCodes: Set<HttpStatusCode>,
     val expectedResponseRegex: Regex? = null,
+    val payload: String? = null,
 ) : ILoggable {
     private val httpClient = HttpClient(CIO) {
         install(WebSockets)
         install(Resources)
+        install(HttpTimeout) {
+            requestTimeoutMillis = timeoutMillis
+            connectTimeoutMillis = timeoutMillis
+            socketTimeoutMillis = timeoutMillis
+        }
         defaultRequest {
             headers {
                 additionalHeaders.map { (name, value) -> append(name, value) }
@@ -39,25 +48,52 @@ class MonitoredService(
         while (isActive) {
             var online = true
             var failReason: String? = null
-            val now = Instant.now()
+            var response: HttpResponse? = null
 
-            val response = httpClient.request {
-                url(this@MonitoredService.url)
-                method = this@MonitoredService.method
+            try {
+                response = httpClient.request {
+                    url(this@MonitoredService.url)
+                    method = this@MonitoredService.method
+                    payload?.let { setBody(it) }
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpRequestTimeoutException,
+                    is ConnectTimeoutException,
+                    is SocketTimeoutException -> {
+                        online = false
+                        failReason = "Timed out"
+                    }
+                    else -> {
+                        online = false
+                        failReason = "An unknown exception occurred: ${ex.message}"
+                    }
+                }
             }
 
-            expectedResponseRegex?.let {
-                if (!it.matches(response.bodyAsText())) {
-                    online = false
-                    failReason = "Regex mismatch"
+            response?.let { res ->
+                expectedStatusCodes.find { it == res.status }.run {
+                    if (this == null) {
+                        online = false
+                        failReason = "Unexpected response code"
+                        return@let
+                    }
+                }
+
+                expectedResponseRegex?.run {
+                    if (!containsMatchIn(res.bodyAsText())) {
+                        online = false
+                        failReason = "Regex mismatch"
+                        return@let
+                    }
                 }
             }
 
             val statusMessage = StatusMessage(
                 online = online,
                 serviceName = name,
-                responseCode = response.status.value,
-                latency = response.responseTime.timestamp - now.toEpochMilli(),
+                responseCode = response?.run { status.value },
+                latency = response?.run { responseTime.timestamp - requestTime.timestamp },
                 failReason = failReason,
             )
 

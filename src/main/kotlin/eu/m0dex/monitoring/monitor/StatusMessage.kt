@@ -5,17 +5,17 @@ import io.questdb.client.Sender
 data class StatusMessage(
     val serviceName: String,
     val online: Boolean,
-    val responseCode: Int,
-    val latency: Long,
+    val responseCode: Int?,
+    val latency: Long?,
     val failReason: String? = null,
 ) {
     fun writeToQuestDb(questDbSender: Sender) {
         val row = questDbSender.table(serviceName)
 
         row.boolColumn("online", online)
-            .longColumn("responseCode", responseCode.toLong())
-            .longColumn("latency", latency)
 
+        responseCode?.let { row.longColumn("responseCode", it.toLong()) }
+        latency?.let { row.longColumn("latency", it) }
         failReason?.let { row.stringColumn("failReason", it) }
 
         row.atNow()
