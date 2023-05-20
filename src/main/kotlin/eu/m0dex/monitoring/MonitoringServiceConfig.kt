@@ -3,6 +3,11 @@ package eu.m0dex.monitoring
 import eu.m0dex.monitoring.service.IServiceConfig
 import io.ktor.http.*
 
+data class ApiConfig(
+    val bindAddress: String = "0.0.0.0",
+    val bindPort: Int = 8080,
+)
+
 data class QuestDbConfig(
     val host: String,
     val writePort: Int = 9009,
@@ -25,6 +30,7 @@ data class MonitoredServiceConfig(
 )
 
 data class MonitoringServiceConfig(
-    val monitored: Map<String, MonitoredServiceConfig>,
+    val api: ApiConfig,
     val questDb: QuestDbConfig,
+    val monitored: Map<String, MonitoredServiceConfig>,
 ) : IServiceConfig

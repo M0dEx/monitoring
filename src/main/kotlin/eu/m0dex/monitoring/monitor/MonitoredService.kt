@@ -1,13 +1,13 @@
 package eu.m0dex.monitoring.monitor
 
 import eu.m0dex.monitoring.service.ILoggable
+import eu.m0dex.monitoring.statusapi.schema.Status
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.network.sockets.*
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.resources.*
-import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -17,7 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
 class MonitoredService(
-    private val questDbChannel: Channel<StatusMessage>,
+    private val questDbChannel: Channel<Pair<String, Status>>,
     val name: String,
     val displayName: String,
     val url: String,
@@ -30,7 +30,6 @@ class MonitoredService(
     val payload: String? = null,
 ) : ILoggable {
     private val httpClient = HttpClient(CIO) {
-        install(WebSockets)
         install(Resources)
         install(HttpTimeout) {
             requestTimeoutMillis = timeoutMillis
@@ -89,16 +88,15 @@ class MonitoredService(
                 }
             }
 
-            val statusMessage = StatusMessage(
+            val status = Status(
                 online = online,
-                serviceName = name,
-                responseCode = response?.run { status.value },
+                responseCode = response?.run { status.value.toLong() },
                 latency = response?.run { responseTime.timestamp - requestTime.timestamp },
                 failReason = failReason,
             )
 
-            logger.info(statusMessage.toString())
-            questDbChannel.send(statusMessage)
+            logger.info("Service '$name' status: $status")
+            questDbChannel.send(Pair(name, status))
 
             delay(intervalMillis)
         }

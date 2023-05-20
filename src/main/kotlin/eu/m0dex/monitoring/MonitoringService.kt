@@ -3,15 +3,16 @@ package eu.m0dex.monitoring
 import eu.m0dex.monitoring.monitor.Monitor
 import eu.m0dex.monitoring.monitor.MonitoredService
 import eu.m0dex.monitoring.monitor.QuestDBWriter
-import eu.m0dex.monitoring.monitor.StatusMessage
+import eu.m0dex.monitoring.statusapi.schema.Status
 import eu.m0dex.monitoring.service.ILoggable
 import eu.m0dex.monitoring.service.IService
+import eu.m0dex.monitoring.statusapi.StatusApi
 import io.questdb.client.Sender
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import org.jetbrains.exposed.sql.Database
+import org.ktorm.database.Database
 
 class MonitoringService(
     override val config: MonitoringServiceConfig,
@@ -19,7 +20,7 @@ class MonitoringService(
     private val questDbReader: Database,
 ) : IService, ILoggable {
 
-    private val questDbChannel = Channel<StatusMessage>(Channel.UNLIMITED)
+    private val questDbChannel = Channel<Pair<String, Status>>(Channel.UNLIMITED)
 
     private val monitoredServices = config.monitored.map { (serviceName, serviceConfig) ->
         MonitoredService(
@@ -40,12 +41,12 @@ class MonitoringService(
     override suspend fun run() = coroutineScope {
         val questDbWriter = QuestDBWriter(questDbSender, questDbChannel)
         val monitor = Monitor(monitoredServices)
+        val statusApi = StatusApi(config.api, questDbReader, monitoredServices)
 
         joinAll(
             launch { questDbWriter.run() },
-            launch { monitor.run() }
+            launch { monitor.run() },
+            launch { statusApi.run() },
         )
-
-        // TODO: Add a REST API provider and a web UI
     }
 }

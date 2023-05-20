@@ -5,7 +5,7 @@ import com.sksamuel.hoplite.addFileSource
 import eu.m0dex.monitoring.service.ILoggable
 import eu.m0dex.monitoring.service.IServiceBuilder
 import io.questdb.client.Sender
-import org.jetbrains.exposed.sql.Database
+import org.ktorm.database.Database
 
 class MonitoringServiceBuilder(
     private val configPath: String
@@ -26,7 +26,7 @@ class MonitoringServiceBuilder(
             .bufferCapacity(config.questDb.writeBufferSize)
             .build()
 
-        logger.info("Connected to QuestDB with the ILP sender")
+        logger.info("Connected to QuestDB host '${config.questDb.host}' with the ILP sender")
 
         val questDbReader = Database
             .connect(
@@ -36,7 +36,7 @@ class MonitoringServiceBuilder(
                 password = config.questDb.password,
             )
 
-        logger.info("Connected to QuestDB with the JDBC reader")
+        logger.info("Connected to QuestDB host '${config.questDb.host}' with the JDBC reader")
 
         return MonitoringService(
             config = config,
