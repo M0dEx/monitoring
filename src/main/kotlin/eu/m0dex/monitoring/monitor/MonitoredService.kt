@@ -1,7 +1,8 @@
 package eu.m0dex.monitoring.monitor
 
 import eu.m0dex.monitoring.service.ILoggable
-import eu.m0dex.monitoring.statusapi.schema.Status
+import eu.m0dex.monitoring.backend.rest.resources.Services
+import eu.m0dex.monitoring.database.schema.Status
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.network.sockets.*
@@ -42,6 +43,14 @@ class MonitoredService(
             }
         }
     }
+
+    fun description() = Services.ServiceDescription(
+        name = name,
+        displayName = displayName,
+        url = url,
+        method = method.value,
+        intervalMillis = intervalMillis,
+    )
 
     suspend fun checkAvailability() = coroutineScope {
         while (isActive) {

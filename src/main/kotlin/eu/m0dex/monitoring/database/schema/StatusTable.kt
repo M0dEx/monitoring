@@ -1,4 +1,4 @@
-package eu.m0dex.monitoring.statusapi.schema
+package eu.m0dex.monitoring.database.schema
 
 import org.ktorm.schema.*
 

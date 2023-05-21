@@ -1,6 +1,6 @@
 package eu.m0dex.monitoring.monitor
 
-import eu.m0dex.monitoring.statusapi.schema.Status
+import eu.m0dex.monitoring.database.schema.Status
 import io.questdb.client.Sender
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.Channel
