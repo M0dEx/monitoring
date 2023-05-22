@@ -106,7 +106,7 @@ class Services {
                         .from(table)
                         .select(table.online)
                         .where(table.timestamp.between(from.toJavaInstant()..to.toJavaInstant()))
-                        .mapNotNull { row -> row[table.online] }
+                        .mapNotNull { row -> row.get(table.online) }
 
                     ServiceUptimeResponse.fromCounts(
                         onlineCount = status.count { it }.toLong(),
