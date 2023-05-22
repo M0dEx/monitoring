@@ -16,15 +16,15 @@ data class Status(
 ) {
     companion object {
         fun fromRow(table: StatusTable, row: QueryRowSet): Status? {
-            val online = row[table.online] ?: return null
+            val online = row.get(table.online) ?: return null
 
             return Status(
                 online = online,
-                responseCode = row[table.responseCode],
-                latency = row[table.latency],
-                failReason = row[table.failReason],
+                responseCode = row.get(table.responseCode),
+                latency = row.get(table.latency),
+                failReason = row.get(table.failReason),
                 // TODO: Maybe there is a better way, but I have not found it after 3 hours of looking
-                timestamp = row[table.timestamp]
+                timestamp = row.get(table.timestamp)
                     ?.atZone(ZoneId.systemDefault())
                     ?.withZoneSameLocal(ZoneId.of("UTC"))
                     ?.toInstant()
