@@ -2,6 +2,7 @@ package eu.m0dex.monitoring
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 object MonitoringMain {
@@ -12,7 +13,7 @@ object MonitoringMain {
 
         parser.parse(args)
 
-        runBlocking {
+        runBlocking(Dispatchers.Default) {
             MonitoringServiceBuilder(configPath)
                 .build()
                 .run()
