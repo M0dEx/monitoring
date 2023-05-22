@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.serialization") version "1.8.21"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "eu.m0dex"
@@ -17,10 +18,10 @@ val hopliteVersion = "2.7.4"
 val logbackVersion = "1.4.7"
 
 repositories {
-    maven{
+    maven {
         url = uri("https://maven.pkg.jetbrains.space/data2viz/p/maven/dev")
     }
-    maven{
+    maven {
         url = uri("https://maven.pkg.jetbrains.space/data2viz/p/maven/public")
     }
     mavenCentral()
@@ -76,7 +77,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.withType<Jar> {
     manifest {
-        attributes (
+        attributes(
             "Main-Class" to "eu.m0dex.monitoring.MonitoringMain"
         )
     }
