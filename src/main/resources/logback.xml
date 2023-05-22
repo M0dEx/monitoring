@@ -1,0 +1,21 @@
+<configuration>
+    <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss.SSSXXX", UTC} [%thread]\t%-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC-STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>1000</queueSize>
+        <discardingThreshold>20</discardingThreshold>
+        <maxFlushTime>10000</maxFlushTime>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="STDOUT" />
+    </appender>
+    <root level="info">
+        <appender-ref ref="ASYNC-STDOUT" />
+    </root>
+</configuration>
