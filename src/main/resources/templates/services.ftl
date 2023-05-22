@@ -21,14 +21,17 @@
                             <#if !service.status?? || !service.status.online??>
                                 <#assign spanClass = "badge text-bg-secondary">
                                 <#assign spanText = "Unknown">
+                                <#assign spanTooltip = "N/A">
                             <#elseif service.status.online>
                                 <#assign spanClass = "badge text-bg-success">
                                 <#assign spanText = "Online">
+                                <#assign spanTooltip = service.status.timestamp.toString()>
                             <#else>
                                 <#assign spanClass = "badge text-bg-danger">
                                 <#assign spanText = "Offline">
+                                <#assign spanTooltip = service.status.timestamp.toString()>
                             </#if>
-                            <span class="${spanClass}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="${service.status.timestamp.toString()}">${spanText}</span>
+                            <span class="${spanClass}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="${spanTooltip}">${spanText}</span>
                             <a href="/services/${service.description.name}">${service.description.displayName}</a>
                         </td>
                         <td>${service.uptime.uptime * 100} %</td>
