@@ -46,7 +46,7 @@ class ServicesGui {
                     uptime = uptime(database, service),
                     history = history(database, service)
                 )
-            } 
+            }
         }.awaitAll()
 
         return@withContext FreeMarkerContent(
