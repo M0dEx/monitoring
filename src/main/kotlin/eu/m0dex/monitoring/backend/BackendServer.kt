@@ -27,12 +27,12 @@ import org.ktorm.database.Database
 class BackendServer(
     config: ApiConfig,
     private val database: Database,
-    private val monitoredServices: Set<MonitoredService>,
+    private val monitoredServices: Set<MonitoredService>
 ) : ILoggable {
     private val server = embeddedServer(
         Netty,
         host = config.bindAddress,
-        port = config.bindPort,
+        port = config.bindPort
     ) {
         install(Compression) {
             gzip()
@@ -42,10 +42,12 @@ class BackendServer(
             templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
         }
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                encodeDefaults = true
-            })
+            json(
+                Json {
+                    prettyPrint = true
+                    encodeDefaults = true
+                }
+            )
         }
 
         routing {

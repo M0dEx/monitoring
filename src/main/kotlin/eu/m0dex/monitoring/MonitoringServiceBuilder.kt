@@ -33,7 +33,7 @@ class MonitoringServiceBuilder(
                 url = "jdbc:postgresql://${config.questDb.host}:${config.questDb.readPort}/questdb",
                 driver = "org.postgresql.Driver",
                 user = config.questDb.username,
-                password = config.questDb.password,
+                password = config.questDb.password
             )
 
         logger.info("Connected to QuestDB host '${config.questDb.host}' with the JDBC reader")
@@ -41,7 +41,7 @@ class MonitoringServiceBuilder(
         return MonitoringService(
             config = config,
             questDbSender = questDbSender,
-            questDbReader = questDbReader,
+            questDbReader = questDbReader
         )
     }
 }

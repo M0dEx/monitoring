@@ -5,7 +5,7 @@ import io.ktor.http.*
 
 data class ApiConfig(
     val bindAddress: String = "0.0.0.0",
-    val bindPort: Int = 8080,
+    val bindPort: Int = 8080
 )
 
 data class QuestDbConfig(
@@ -14,7 +14,7 @@ data class QuestDbConfig(
     val readPort: Int = 8812,
     val username: String = "admin",
     val password: String = "quest",
-    val writeBufferSize: Int = 64000,
+    val writeBufferSize: Int = 64000
 )
 
 data class MonitoredServiceConfig(
@@ -26,11 +26,11 @@ data class MonitoredServiceConfig(
     val expectedStatusCodes: Set<HttpStatusCode> = setOf(HttpStatusCode.OK),
     val expectedResponseRegex: Regex? = null,
     val intervalMillis: Long = 10000,
-    val timeoutMillis: Long = 10000,
+    val timeoutMillis: Long = 10000
 )
 
 data class MonitoringServiceConfig(
     val api: ApiConfig,
     val questDb: QuestDbConfig,
-    val monitored: Map<String, MonitoredServiceConfig>,
+    val monitored: Map<String, MonitoredServiceConfig>
 ) : IServiceConfig

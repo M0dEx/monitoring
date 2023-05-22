@@ -1,9 +1,9 @@
 package eu.m0dex.monitoring.backend.rest.resources
 
-import eu.m0dex.monitoring.monitor.MonitoredService
-import eu.m0dex.monitoring.service.ILoggable
 import eu.m0dex.monitoring.database.schema.Status
 import eu.m0dex.monitoring.database.schema.StatusTable
+import eu.m0dex.monitoring.monitor.MonitoredService
+import eu.m0dex.monitoring.service.ILoggable
 import io.ktor.resources.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +25,7 @@ class Services {
         val displayName: String,
         val url: String,
         val method: String,
-        val intervalMillis: Long,
+        val intervalMillis: Long
     )
 
     fun response(monitoredServices: Set<MonitoredService>): List<ServiceDescription> {
@@ -80,7 +80,7 @@ class Services {
                 val offlineCount: Long = 0,
                 val uptime: Double = 0.0,
                 val from: Instant = JavaInstant.EPOCH.toKotlinInstant(),
-                val to: Instant = Clock.System.now(),
+                val to: Instant = Clock.System.now()
             ) {
                 companion object {
                     fun fromCounts(onlineCount: Long, offlineCount: Long, from: Instant, to: Instant): ServiceUptimeResponse {
@@ -92,7 +92,7 @@ class Services {
                             offlineCount = offlineCount,
                             uptime = uptimePercentage,
                             from = from,
-                            to = to,
+                            to = to
                         )
                     }
                 }
@@ -112,7 +112,7 @@ class Services {
                         onlineCount = status.count { it }.toLong(),
                         offlineCount = status.count { !it }.toLong(),
                         from = from,
-                        to = to,
+                        to = to
                     )
                 } catch (e: PSQLException) {
                     logger.error("Failed to query the database for uptime of service '${parent.name}'", e)

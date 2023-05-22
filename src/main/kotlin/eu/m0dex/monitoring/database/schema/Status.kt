@@ -12,7 +12,7 @@ data class Status(
     val responseCode: Long? = null,
     val latency: Long? = null,
     val failReason: String? = null,
-    val timestamp: Instant? = null,
+    val timestamp: Instant? = null
 ) {
     companion object {
         fun fromRow(table: StatusTable, row: QueryRowSet): Status? {
@@ -25,10 +25,10 @@ data class Status(
                 failReason = row[table.failReason],
                 // TODO: Maybe there is a better way, but I have not found it after 3 hours of looking
                 timestamp = row[table.timestamp]
-                        ?.atZone(ZoneId.systemDefault())
-                        ?.withZoneSameLocal(ZoneId.of("UTC"))
-                        ?.toInstant()
-                        ?.toKotlinInstant(),
+                    ?.atZone(ZoneId.systemDefault())
+                    ?.withZoneSameLocal(ZoneId.of("UTC"))
+                    ?.toInstant()
+                    ?.toKotlinInstant()
             )
         }
     }

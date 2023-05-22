@@ -1,12 +1,12 @@
 package eu.m0dex.monitoring
 
+import eu.m0dex.monitoring.backend.BackendServer
+import eu.m0dex.monitoring.database.schema.Status
 import eu.m0dex.monitoring.monitor.Monitor
 import eu.m0dex.monitoring.monitor.MonitoredService
 import eu.m0dex.monitoring.monitor.QuestDBWriter
-import eu.m0dex.monitoring.database.schema.Status
 import eu.m0dex.monitoring.service.ILoggable
 import eu.m0dex.monitoring.service.IService
-import eu.m0dex.monitoring.backend.BackendServer
 import io.questdb.client.Sender
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +17,7 @@ import org.ktorm.database.Database
 class MonitoringService(
     override val config: MonitoringServiceConfig,
     private val questDbSender: Sender,
-    private val questDbReader: Database,
+    private val questDbReader: Database
 ) : IService, ILoggable {
 
     private val questDbChannel = Channel<Pair<String, Status>>(Channel.UNLIMITED)
@@ -34,7 +34,7 @@ class MonitoringService(
             expectedStatusCodes = serviceConfig.expectedStatusCodes,
             expectedResponseRegex = serviceConfig.expectedResponseRegex,
             intervalMillis = serviceConfig.intervalMillis,
-            timeoutMillis = serviceConfig.timeoutMillis,
+            timeoutMillis = serviceConfig.timeoutMillis
         )
     }.toSet()
 
@@ -46,7 +46,7 @@ class MonitoringService(
         joinAll(
             launch { questDbWriter.run() },
             launch { monitor.run() },
-            launch { backendServer.run() },
+            launch { backendServer.run() }
         )
     }
 }

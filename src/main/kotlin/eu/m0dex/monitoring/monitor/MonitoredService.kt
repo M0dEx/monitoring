@@ -1,8 +1,8 @@
 package eu.m0dex.monitoring.monitor
 
-import eu.m0dex.monitoring.service.ILoggable
 import eu.m0dex.monitoring.backend.rest.resources.Services
 import eu.m0dex.monitoring.database.schema.Status
+import eu.m0dex.monitoring.service.ILoggable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.network.sockets.*
@@ -28,7 +28,7 @@ class MonitoredService(
     val additionalHeaders: Map<String, String>,
     val expectedStatusCodes: Set<HttpStatusCode>,
     val expectedResponseRegex: Regex? = null,
-    val payload: String? = null,
+    val payload: String? = null
 ) : ILoggable {
     private val httpClient = HttpClient(CIO) {
         install(Resources)
@@ -49,7 +49,7 @@ class MonitoredService(
         displayName = displayName,
         url = url,
         method = method.value,
-        intervalMillis = intervalMillis,
+        intervalMillis = intervalMillis
     )
 
     suspend fun checkAvailability() = coroutineScope {
@@ -101,7 +101,7 @@ class MonitoredService(
                 online = online,
                 responseCode = response?.run { status.value.toLong() },
                 latency = response?.run { responseTime.timestamp - requestTime.timestamp },
-                failReason = failReason,
+                failReason = failReason
             )
 
             logger.info("Service '$name' status: $status")

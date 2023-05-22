@@ -6,14 +6,14 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 class Monitor(
-    private val monitoredServices: Set<MonitoredService>,
+    private val monitoredServices: Set<MonitoredService>
 ) : ILoggable {
 
     suspend fun run() = coroutineScope {
         logger.info("Starting monitoring of ${monitoredServices.size} services")
 
         monitoredServices
-            .map { launch { it.checkAvailability() }}
+            .map { launch { it.checkAvailability() } }
             .joinAll()
     }
 }
