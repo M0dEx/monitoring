@@ -75,7 +75,7 @@ class ServicesGui {
             .groupBy { it.timestamp!!.hourGroup() }
             .toMutableMap()
 
-        (from.hourGroup().toEpochMilliseconds() until now.hourGroup().toEpochMilliseconds() step HOUR_MILLIS)
+        (from.hourGroup().toEpochMilliseconds()..now.hourGroup().toEpochMilliseconds() step HOUR_MILLIS)
             .map { Instant.fromEpochMilliseconds(it) }
             .map { historyPerHour.putIfAbsent(it, listOf()) }
 
