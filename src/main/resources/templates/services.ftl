@@ -18,7 +18,10 @@
                 <#list services as service>
                     <tr>
                         <td>
-                            <#if service.status.online>
+                            <#if !service.status?? || !service.status.online??>
+                                <#assign spanClass = "badge text-bg-secondary">
+                                <#assign spanText = "Unknown">
+                            <#elseif service.status.online>
                                 <#assign spanClass = "badge text-bg-success">
                                 <#assign spanText = "Online">
                             <#else>
