@@ -74,6 +74,23 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = javaVersion
 }
 
+tasks.withType<Jar> {
+    manifest {
+        attributes (
+            "Main-Class" to "eu.m0dex.monitoring.MonitoringMain"
+        )
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+}
+
 tasks.test {
     useJUnitPlatform()
 }
