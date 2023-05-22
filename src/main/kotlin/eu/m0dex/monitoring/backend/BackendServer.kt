@@ -53,20 +53,20 @@ class BackendServer(
             get("/") {
                 call.respondRedirect("/services")
             }
-            get("/services") {
-                call.respond(
-                    FreeMarkerContent(
-                        "services.ftl", mapOf(
-                            "services" to ServicesGui().response(database, monitoredServices)
-                        )
-                    )
-                )
+            get<ServicesGui> { services ->
+                call.respond(services.response(database, monitoredServices))
+            }
+            get<ServicesGui.Service> { service ->
+                call.respond(service.response(monitoredServices) ?: HttpStatusCode.NotFound)
+            }
+            get<ServicesGui.Service.History> { history ->
+                call.respond(history.response(database, monitoredServices))
             }
             get<Services> { services ->
                 call.respond(services.response(monitoredServices))
             }
             get<Services.Service> { service ->
-                call.respondNullable(service.response(database) ?: HttpStatusCode.NotFound)
+                call.respond(service.response(database) ?: HttpStatusCode.NotFound)
             }
             get<Services.Service.History> { history ->
                 call.respond(history.response(database))

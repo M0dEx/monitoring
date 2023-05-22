@@ -73,17 +73,17 @@ class Services {
         }
 
         @Resource("uptime")
-        class Uptime(val parent: Service, val from: Instant = JavaInstant.EPOCH.toKotlinInstant(), val to: Instant = Clock.System.now(), val sampleBy: String? = null) : ILoggable {
+        class Uptime(val parent: Service, val from: Instant = JavaInstant.EPOCH.toKotlinInstant(), val to: Instant = Clock.System.now()) : ILoggable {
             @Serializable
             data class ServiceUptimeResponse(
-                val onlineCount: Int = 0,
-                val offlineCount: Int = 0,
+                val onlineCount: Long = 0,
+                val offlineCount: Long = 0,
                 val uptime: Double = 0.0,
                 val from: Instant = JavaInstant.EPOCH.toKotlinInstant(),
                 val to: Instant = Clock.System.now(),
             ) {
                 companion object {
-                    fun fromCounts(onlineCount: Int, offlineCount: Int, from: Instant, to: Instant): ServiceUptimeResponse {
+                    fun fromCounts(onlineCount: Long, offlineCount: Long, from: Instant, to: Instant): ServiceUptimeResponse {
                         val totalCount = onlineCount + offlineCount
                         val uptimePercentage = if (totalCount > 0) onlineCount.toDouble() / totalCount else 0.0
 
@@ -109,8 +109,8 @@ class Services {
                         .mapNotNull { row -> row[table.online] }
 
                     ServiceUptimeResponse.fromCounts(
-                        onlineCount = status.count { it },
-                        offlineCount = status.count { !it },
+                        onlineCount = status.count { it }.toLong(),
+                        offlineCount = status.count { !it }.toLong(),
                         from = from,
                         to = to,
                     )
