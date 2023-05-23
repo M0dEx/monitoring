@@ -13,7 +13,7 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-auto">
-            <table class="table table-dark">
+            <table class="table table-dark table-hover align-middle">
                 <tr>
                     <th>Status</th>
                     <th>Response code</th>

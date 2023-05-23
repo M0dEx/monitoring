@@ -93,17 +93,6 @@ class ServicesGui {
 
     @Resource("{name}")
     class Service(val parent: ServicesGui = ServicesGui(), val name: String) {
-        fun response(monitoredServices: Set<MonitoredService>): FreeMarkerContent? = monitoredServices
-            .find { it.name == this.name }
-            ?.description()
-            ?.let {
-                FreeMarkerContent(
-                    "service/service.ftl",
-                    mapOf(
-                        "serviceDescription" to it
-                    )
-                )
-            }
 
         @Resource("history")
         class History(val parent: Service, val from: Instant = JavaInstant.EPOCH.toKotlinInstant(), val to: Instant = Clock.System.now()) {

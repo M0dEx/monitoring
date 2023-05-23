@@ -58,9 +58,6 @@ class BackendServer(
             get<ServicesGui> { services ->
                 call.respond(services.response(database, monitoredServices))
             }
-            get<ServicesGui.Service> { service ->
-                call.respond(service.response(monitoredServices) ?: HttpStatusCode.NotFound)
-            }
             get<ServicesGui.Service.History> { history ->
                 call.respond(history.response(database, monitoredServices))
             }
