@@ -18,7 +18,7 @@
                 <#list services as service>
                     <tr>
                         <td>
-                            <#if !service.status?? || !service.status.online??>
+                            <#if !service.status?? || !service.status.online?? || !service.status.timestamp??>
                                 <#assign spanClass = "badge text-bg-secondary">
                                 <#assign spanText = "Unknown">
                                 <#assign spanTooltip = "N/A">
